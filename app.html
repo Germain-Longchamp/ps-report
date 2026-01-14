@@ -1,0 +1,290 @@
+<!-- Import Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!-- Import Materialize CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+<div id="app-container">
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="brand-logo-custom">
+            <i class="material-icons left">speed</i> PS Report
+        </div>
+
+        <div class="sidebar-menu">
+            <div id="nav-dashboard" class="nav-item">
+                <span><i class="material-icons tiny left" style="margin-right:10px;">dashboard</i>Tableau de bord</span>
+            </div>
+            <div id="nav-notifications" class="nav-item">
+                <span style="display:flex; align-items:center;">
+                    <i class="material-icons tiny left" style="margin-right:10px;">notifications</i>
+                    Notifications
+                </span>
+                <span id="notif-badge" class="new badge red" data-badge-caption="" style="display:none">0</span>
+            </div>
+        </div>
+
+        <div class="sidebar-label">Vos Dossiers</div>
+        <ul id="folder-list" class="folder-list"></ul>
+
+        <div class="sidebar-footer">
+            <div class="input-field">
+                <input id="new-folder-name" type="text" class="add-folder-input" placeholder="+ Nouveau dossier">
+            </div>
+            <div style="margin-top: 20px; display:flex; justify-content:space-between;">
+                <a class="waves-effect waves-light btn-small grey darken-3 modal-trigger" href="#settings-modal">
+                    <i class="material-icons left">settings</i>API Key
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <header>
+            <!-- Header Left: Title + Edit + Delete Actions grouped -->
+            <div class="header-left" style="display:flex; align-items:center;">
+                <h1 id="page-title" class="folder-title" style="margin-right: 15px;">Chargement...</h1>
+
+                <div class="header-actions" style="display:flex; align-items:center;">
+                    <!-- Edit Folder Button -->
+                    <a id="edit-folder-btn" class="btn-flat waves-effect waves-teal tooltipped" data-position="bottom" data-tooltip="Renommer le dossier" style="display:none;">
+                        <i class="material-icons grey-text">edit</i>
+                    </a>
+
+                    <!-- Delete Folder Button -->
+                    <button id="delete-folder-btn" class="btn-flat red-text waves-effect waves-red tooltipped" data-position="bottom" data-tooltip="Supprimer le dossier" style="display:none;">
+                        <i class="material-icons">delete_outline</i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <!-- Clear Notifs Button -->
+                <button id="clear-notifs-btn" class="btn-flat waves-effect waves-teal tooltipped" data-position="left" data-tooltip="Tout effacer" style="display:none;">
+                    <i class="material-icons grey-text">clear_all</i>
+                </button>
+            </div>
+        </header>
+
+        <div class="content-scroll">
+            <div class="container-fluid-custom">
+
+                <!-- View: Dashboard Stats -->
+                <div id="view-dashboard" style="display: none;">
+                    <div class="stats-row">
+                        <!-- Card 1: Total -->
+                        <div class="stat-card">
+                            <div class="stat-icon bg-blue"><i class="material-icons">link</i></div>
+                            <div class="stat-content">
+                                <h4 id="stat-total-urls">0</h4>
+                                <p>Total URLs</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Analyzed -->
+                        <div class="stat-card">
+                            <div class="stat-icon bg-green"><i class="material-icons">fact_check</i></div>
+                            <div class="stat-content">
+                                <h4 id="stat-analyzed">0</h4>
+                                <p>Analysées</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Offline -->
+                        <div class="stat-card" id="stat-card-offline">
+                            <div class="stat-icon bg-red"><i class="material-icons">cloud_off</i></div>
+                            <div class="stat-content">
+                                <h4 id="stat-offline">0</h4>
+                                <p>Hors-ligne</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Improvements -->
+                        <div class="stat-card">
+                            <div class="stat-icon bg-orange"><i class="material-icons">trending_up</i></div>
+                            <div class="stat-content">
+                                <h4 id="stat-improvements">0</h4>
+                                <p>Améliorations</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 5: Alerts -->
+                        <div class="stat-card">
+                            <div class="stat-icon bg-red"><i class="material-icons">warning</i></div>
+                            <div class="stat-content">
+                                <h4 id="stat-alerts">0</h4>
+                                <p>Critiques</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offline Section (Visible only if issues) -->
+                    <div id="offline-section" style="display:none; margin-bottom: 30px;">
+                        <div class="section-header">
+                            <i class="material-icons red-text">wifi_off</i> Sites Inaccessibles / Erreurs
+                        </div>
+                        <div class="scrollable-list-container" style="max-height: 300px; border: 1px solid #ffcdd2; background: #ffebee;">
+                            <div id="offline-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m6">
+                            <div class="section-header">
+                                <i class="material-icons red-text">error_outline</i> Alertes Critiques (Score 50)
+                            </div>
+                            <div class="scrollable-list-container">
+                                <div id="alerts-list"></div>
+                                <div id="no-alerts-msg" style="text-align:center; padding: 20px; color:#cfd8dc; display:none;">
+                                    <i class="material-icons medium">check_circle</i>
+                                    <p>Aucune alerte critique.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s12 m6">
+                            <div class="section-header">
+                                <i class="material-icons orange-text">build</i> Améliorations Possibles (Score 50-90)
+                            </div>
+                            <div class="scrollable-list-container">
+                                <div id="improvements-list"></div>
+                                <div id="no-improvements-msg" style="text-align:center; padding: 20px; color:#cfd8dc; display:none;">
+                                    <i class="material-icons medium">thumb_up</i>
+                                    <p>Rien à signaler, tout semble optimisé.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View: Notifications -->
+                <div id="view-notifications" style="display: none;">
+                    <div class="row">
+                        <div class="col s12">
+                            <ul id="notification-list" class="collection with-header" style="border:none; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                <!-- Items injected here -->
+                            </ul>
+                            <div id="empty-notifs" style="text-align:center; padding: 50px; color:#cfd8dc; display:none;">
+                                <i class="material-icons large">notifications_none</i>
+                                <p>Aucune notification récente.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View: Folder Details -->
+                <div id="view-folder" style="display: none;">
+                    <div class="add-url-area">
+                        <div class="row" style="margin-bottom: 0; align-items: center;">
+                            <div class="col s12 m4">
+                                <div class="input-field" style="margin-top: 0;">
+                                    <i class="material-icons prefix">label</i>
+                                    <input id="website_name" type="text" placeholder="Ex: Page Accueil">
+                                    <label for="website_name" class="active">Nom (Optionnel)</label>
+                                </div>
+                            </div>
+                            <div class="col s12 m5">
+                                <div class="input-field" style="margin-top: 0;">
+                                    <i class="material-icons prefix">link</i>
+                                    <input id="website_url" type="text" placeholder="https://www.exemple.com">
+                                    <label for="website_url" class="active">URL</label>
+                                </div>
+                            </div>
+                            <div class="col s12 m3 right-align">
+                                <button id="add-btn" class="btn waves-effect waves-light red lighten-1" style="width: 100%;">
+                                    Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Folder Toolbar -->
+                    <div class="folder-toolbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding: 0 5px;">
+                        <h5 style="margin:0; color:#546e7a; font-size:1.3rem; font-weight: 500;">Pages du site</h5>
+
+                        <div>
+                            <!-- Combined Analysis Button -->
+                            <button id="analyze-all-btn" class="btn waves-effect waves-light blue lighten-1 tooltipped" data-position="left" data-tooltip="Vérifier le statut ET lancer l'audit de performance">
+                                <i class="material-icons left">play_for_work</i>Lancer l'analyse complète
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="url-list" class="url-grid-container"></div>
+
+                    <div id="empty-state" class="empty-dashboard" style="display: none; height: 300px;">
+                        <i class="material-icons large grey-text text-lighten-2">dashboard_customize</i>
+                        <p>Ce dossier est vide.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Settings Modal -->
+<div id="settings-modal" class="modal">
+    <div class="modal-content">
+        <h4>Configuration API</h4>
+        <p>Pour récupérer les scores, vous avez besoin d'une clé API Google PageSpeed Insights (gratuite).</p>
+        <form onsubmit="return false;">
+            <div class="input-field">
+                <input id="api-key-input" type="password" autocomplete="new-password">
+                <label for="api-key-input">Votre Clé API Google</label>
+                <span class="helper-text">La clé est stockée uniquement dans votre navigateur (LocalStorage).</span>
+            </div>
+        </form>
+        <p><a href="https://developers.google.com/speed/docs/insights/v5/get-started" target="_blank">Obtenir une clé API ici</a></p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat" id="save-api-key">Enregistrer</a>
+    </div>
+</div>
+
+<!-- Folder Edit Modal -->
+<div id="folder-edit-modal" class="modal">
+    <div class="modal-content">
+        <h4>Renommer le dossier</h4>
+        <div class="input-field">
+            <input id="edit-folder-name-input" type="text">
+            <label for="edit-folder-name-input">Nouveau nom du dossier</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
+        <a href="#!" class="modal-close waves-effect waves-green btn red lighten-1" id="save-folder-name-btn">Valider</a>
+    </div>
+</div>
+
+<!-- URL Edit Modal -->
+<div id="url-edit-modal" class="modal">
+    <div class="modal-content">
+        <h4>Modifier l'URL</h4>
+        <input type="hidden" id="edit-url-id-hidden">
+        <div class="input-field">
+            <input id="edit-url-name-input" type="text">
+            <label for="edit-url-name-input">Nom de la page</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
+        <a href="#!" class="modal-close waves-effect waves-green btn red lighten-1" id="save-url-edit-btn">Enregistrer</a>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmation-modal" class="modal">
+    <div class="modal-content">
+        <h4 id="confirm-modal-title">Confirmation</h4>
+        <p id="confirm-modal-msg">Êtes-vous sûr ?</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
+        <a href="#!" class="modal-close waves-effect waves-red btn red lighten-1" id="confirm-action-btn">Confirmer</a>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+{{ require_js(get_asset_url('/theme-studio-hub/tests/poc-psreport.js'), { async: false }) }}
