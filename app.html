@@ -24,16 +24,17 @@
             </div>
         </div>
 
-        <div class="sidebar-label">Vos Dossiers</div>
+        <div class="sidebar-label">Vos Sites Web</div>
         <ul id="folder-list" class="folder-list"></ul>
 
         <div class="sidebar-footer">
-            <div class="input-field">
-                <input id="new-folder-name" type="text" class="add-folder-input" placeholder="+ Nouveau dossier">
-            </div>
-            <div style="margin-top: 20px; display:flex; justify-content:space-between;">
-                <a class="waves-effect waves-light btn-small grey darken-3 modal-trigger" href="#settings-modal">
-                    <i class="material-icons left">settings</i>API Key
+            <button data-target="create-site-modal" class="btn waves-effect waves-light grey darken-3 modal-trigger" style="width:100%; font-size:0.8rem;">
+                <i class="material-icons left">add</i>Nouveau Site
+            </button>
+            
+            <div style="margin-top: 15px; display:flex; justify-content:center;">
+                <a class="waves-effect waves-light btn-flat grey-text text-lighten-1 modal-trigger" href="#settings-modal" style="font-size:0.8rem;">
+                    <i class="material-icons left tiny">settings</i>API Key
                 </a>
             </div>
         </div>
@@ -42,25 +43,29 @@
     <!-- Main Content -->
     <main id="main-content">
         <header>
-            <!-- Header Left: Title + Edit + Delete Actions grouped -->
-            <div class="header-left" style="display:flex; align-items:center;">
-                <h1 id="page-title" class="folder-title" style="margin-right: 15px;">Chargement...</h1>
+            <div class="header-left" style="display:flex; align-items:center; flex-wrap:wrap; gap: 15px;">
+                 <h1 id="page-title" class="folder-title" style="margin:0; line-height:1.2;">Chargement...</h1>
+                 
+                 <a id="visit-site-btn" href="#" target="_blank" class="btn-flat waves-effect waves-teal btn-small grey-text text-darken-1" style="display:none; font-size: 0.8rem; padding: 0 10px; height: 32px; line-height: 32px;">
+                    <i class="material-icons left tiny" style="margin-right:5px; font-size: 1rem;">open_in_new</i>Accéder au site
+                 </a>
 
-                <div class="header-actions" style="display:flex; align-items:center;">
-                    <!-- Edit Folder Button -->
-                    <a id="edit-folder-btn" class="btn-flat waves-effect waves-teal tooltipped" data-position="bottom" data-tooltip="Renommer le dossier" style="display:none;">
+                 <div class="header-actions" style="display:flex; align-items:center; gap: 5px;">
+                     <a id="edit-folder-btn" class="btn-flat waves-effect waves-teal tooltipped" data-position="bottom" data-tooltip="Modifier le site" style="display:none;">
                         <i class="material-icons grey-text">edit</i>
-                    </a>
-
-                    <!-- Delete Folder Button -->
-                    <button id="delete-folder-btn" class="btn-flat red-text waves-effect waves-red tooltipped" data-position="bottom" data-tooltip="Supprimer le dossier" style="display:none;">
+                     </a>
+    
+                     <button id="delete-folder-btn" class="btn-flat red-text waves-effect waves-red tooltipped" data-position="bottom" data-tooltip="Supprimer le site" style="display:none;">
                         <i class="material-icons">delete_outline</i>
-                    </button>
-                </div>
-            </div>
+                     </button>
 
+                     <button id="analyze-all-btn" class="btn waves-effect waves-light blue lighten-1 tooltipped" data-position="bottom" data-tooltip="Vérifier le statut ET lancer l'audit de performance" style="display:none; margin-left: 10px;">
+                        <i class="material-icons left">play_for_work</i>Analyse complète
+                    </button>
+                 </div>
+            </div>
+           
             <div class="header-right">
-                <!-- Clear Notifs Button -->
                 <button id="clear-notifs-btn" class="btn-flat waves-effect waves-teal tooltipped" data-position="left" data-tooltip="Tout effacer" style="display:none;">
                     <i class="material-icons grey-text">clear_all</i>
                 </button>
@@ -72,99 +77,89 @@
 
                 <!-- View: Dashboard Stats -->
                 <div id="view-dashboard" style="display: none;">
-                    <div class="stats-row">
-                        <!-- Card 1: Total -->
-                        <div class="stat-card">
-                            <div class="stat-icon bg-blue"><i class="material-icons">link</i></div>
-                            <div class="stat-content">
-                                <h4 id="stat-total-urls">0</h4>
-                                <p>Total URLs</p>
-                            </div>
-                        </div>
 
-                        <!-- Card 2: Analyzed -->
-                        <div class="stat-card">
-                            <div class="stat-icon bg-green"><i class="material-icons">fact_check</i></div>
-                            <div class="stat-content">
-                                <h4 id="stat-analyzed">0</h4>
-                                <p>Analysées</p>
-                            </div>
-                        </div>
-
-                        <!-- Card 3: Offline -->
-                        <div class="stat-card" id="stat-card-offline">
-                            <div class="stat-icon bg-red"><i class="material-icons">cloud_off</i></div>
-                            <div class="stat-content">
-                                <h4 id="stat-offline">0</h4>
-                                <p>Hors-ligne</p>
-                            </div>
-                        </div>
-
-                        <!-- Card 4: Improvements -->
-                        <div class="stat-card">
-                            <div class="stat-icon bg-orange"><i class="material-icons">trending_up</i></div>
-                            <div class="stat-content">
-                                <h4 id="stat-improvements">0</h4>
-                                <p>Améliorations</p>
-                            </div>
-                        </div>
-
-                        <!-- Card 5: Alerts -->
-                        <div class="stat-card">
-                            <div class="stat-icon bg-red"><i class="material-icons">warning</i></div>
-                            <div class="stat-content">
-                                <h4 id="stat-alerts">0</h4>
-                                <p>Critiques</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Offline Section (Visible only if issues) -->
+                    <!-- Offline Section (Visible only if issues) - First Position -->
                     <div id="offline-section" style="display:none; margin-bottom: 30px;">
-                        <div class="section-header">
-                            <i class="material-icons red-text">wifi_off</i> Sites Inaccessibles / Erreurs
-                        </div>
-                        <div class="scrollable-list-container" style="max-height: 300px; border: 1px solid #ffcdd2; background: #ffebee;">
-                            <div id="offline-list"></div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col s12 m6">
-                            <div class="section-header">
-                                <i class="material-icons red-text">error_outline</i> Alertes Critiques (Score 50)
+                        <div class="card-panel red lighten-5 z-depth-0" style="border: 1px solid #ffcdd2; border-radius: 8px;">
+                            <div class="section-header" style="margin-top:0; color:#c62828;">
+                                <i class="material-icons left">wifi_off</i> Pages Inaccessibles / Erreurs
                             </div>
-                            <div class="scrollable-list-container">
-                                <div id="alerts-list"></div>
-                                <div id="no-alerts-msg" style="text-align:center; padding: 20px; color:#cfd8dc; display:none;">
-                                    <i class="material-icons medium">check_circle</i>
-                                    <p>Aucune alerte critique.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col s12 m6">
-                            <div class="section-header">
-                                <i class="material-icons orange-text">build</i> Améliorations Possibles (Score 50-90)
-                            </div>
-                            <div class="scrollable-list-container">
-                                <div id="improvements-list"></div>
-                                <div id="no-improvements-msg" style="text-align:center; padding: 20px; color:#cfd8dc; display:none;">
-                                    <i class="material-icons medium">thumb_up</i>
-                                    <p>Rien à signaler, tout semble optimisé.</p>
-                                </div>
+                            <div class="scrollable-list-container" style="max-height: 300px; background: transparent; padding:0;">
+                                <div id="offline-list"></div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- SECTION 1: SYSTEM STATUS -->
+                    <div class="dashboard-block-container">
+                        <div class="block-header">
+                            <h5 class="block-title"><i class="material-icons blue-text">dns</i> Statuts Systèmes</h5>
+                            <button id="refresh-systems-btn" class="btn-small waves-effect waves-light blue lighten-5 blue-text text-darken-2 flat-btn" style="border:none;">
+                                <i class="material-icons left">refresh</i>Actualiser
+                            </button>
+                        </div>
+                        
+                        <div class="system-list-container" id="systems-list-container">
+                            <!-- Injected JS: Modern List Items -->
+                        </div>
+                        <div id="no-sites-msg" style="text-align:center; padding: 30px; color:#90a4ae; display:none; background:white; border-radius:8px;">
+                            <i class="material-icons medium">domain_disabled</i>
+                            <p>Aucun site configuré.</p>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: GLOBAL METRICS -->
+                    <div class="dashboard-block-container" style="margin-top: 30px;">
+                        <div class="block-header">
+                            <h5 class="block-title"><i class="material-icons teal-text">speed</i> Métriques Globales</h5>
+                        </div>
+                        
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-blue"><i class="material-icons">link</i></div>
+                                <div class="stat-content">
+                                    <h4 id="stat-total-urls">0</h4>
+                                    <p>Total URLs</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon bg-green"><i class="material-icons">fact_check</i></div>
+                                <div class="stat-content">
+                                    <h4 id="stat-analyzed">0</h4>
+                                    <p>Analysées</p>
+                                </div>
+                            </div>
+                            <div class="stat-card" id="stat-card-offline">
+                                <div class="stat-icon bg-red"><i class="material-icons">cloud_off</i></div>
+                                <div class="stat-content">
+                                    <h4 id="stat-offline">0</h4>
+                                    <p>Hors-ligne</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon bg-orange"><i class="material-icons">trending_up</i></div>
+                                <div class="stat-content">
+                                    <h4 id="stat-improvements">0</h4>
+                                    <p>Améliorations</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon bg-red"><i class="material-icons">warning</i></div>
+                                <div class="stat-content">
+                                    <h4 id="stat-alerts">0</h4>
+                                    <p>Critiques</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- View: Notifications -->
                 <div id="view-notifications" style="display: none;">
                     <div class="row">
                         <div class="col s12">
-                            <ul id="notification-list" class="collection with-header" style="border:none; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                                <!-- Items injected here -->
-                            </ul>
+                            <ul id="notification-list" class="collection with-header" style="border:none; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"></ul>
                             <div id="empty-notifs" style="text-align:center; padding: 50px; color:#cfd8dc; display:none;">
                                 <i class="material-icons large">notifications_none</i>
                                 <p>Aucune notification récente.</p>
@@ -175,26 +170,38 @@
 
                 <!-- View: Folder Details -->
                 <div id="view-folder" style="display: none;">
-                    <div class="add-url-area">
-                        <div class="row" style="margin-bottom: 0; align-items: center;">
-                            <div class="col s12 m4">
-                                <div class="input-field" style="margin-top: 0;">
-                                    <i class="material-icons prefix">label</i>
-                                    <input id="website_name" type="text" placeholder="Ex: Page Accueil">
-                                    <label for="website_name" class="active">Nom (Optionnel)</label>
-                                </div>
+                    
+                    <!-- GENERAL SITE BLOCK -->
+                    <div id="site-general-block" class="card-panel white z-depth-1" style="display:none; margin-bottom:30px; padding:0; overflow:hidden; border-radius: 8px;">
+                        <div style="background:#f5f7fa; padding: 15px 25px; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center;">
+                             <h5 class="block-title" style="font-size:1.1rem; color:#546e7a;"><i class="material-icons tiny left">info</i> Général</h5>
+                             <span id="site-last-check" class="grey-text" style="font-size:0.8rem;"></span>
+                        </div>
+                        <div style="padding: 25px; display:flex; flex-wrap:wrap; gap:30px; align-items:center;">
+                            <!-- Screenshot -->
+                            <div style="flex: 0 0 200px; height: 120px; background:#eee; border-radius:4px; overflow:hidden; border:1px solid #e0e0e0; display:flex; align-items:center; justify-content:center;">
+                                <img id="site-screenshot" src="" alt="Screenshot" style="width:100%; height:auto; display:none;">
+                                <i id="site-screenshot-placeholder" class="material-icons grey-text text-lighten-2 medium">image</i>
                             </div>
-                            <div class="col s12 m5">
-                                <div class="input-field" style="margin-top: 0;">
-                                    <i class="material-icons prefix">link</i>
-                                    <input id="website_url" type="text" placeholder="https://www.exemple.com">
-                                    <label for="website_url" class="active">URL</label>
+                            
+                            <!-- Metrics -->
+                            <div style="flex: 1; display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:20px;">
+                                
+                                <div class="general-metric">
+                                    <span class="gm-label">Status Code</span>
+                                    <div id="gm-status-code" class="gm-value">-</div>
                                 </div>
-                            </div>
-                            <div class="col s12 m3 right-align">
-                                <button id="add-btn" class="btn waves-effect waves-light red lighten-1" style="width: 100%;">
-                                    Ajouter
-                                </button>
+                                
+                                <div class="general-metric">
+                                    <span class="gm-label">Sécurité (HTTPS)</span>
+                                    <div id="gm-https" class="gm-value">-</div>
+                                </div>
+                                
+                                <div class="general-metric">
+                                    <span class="gm-label">Indexable (SEO)</span>
+                                    <div id="gm-crawling" class="gm-value">-</div>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -202,17 +209,17 @@
                     <!-- Folder Toolbar -->
                     <div class="folder-toolbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding: 0 5px;">
                         <h5 style="margin:0; color:#546e7a; font-size:1.3rem; font-weight: 500;">Pages du site</h5>
-
+                        
                         <div>
-                            <!-- Combined Analysis Button -->
-                            <button id="analyze-all-btn" class="btn waves-effect waves-light blue lighten-1 tooltipped" data-position="left" data-tooltip="Vérifier le statut ET lancer l'audit de performance">
-                                <i class="material-icons left">play_for_work</i>Lancer l'analyse complète
+                            <!-- Add Page Button -->
+                            <button data-target="add-url-modal" class="btn waves-effect waves-light red lighten-1 modal-trigger" id="open-add-url-modal-btn">
+                                <i class="material-icons left">add</i>Ajouter une page
                             </button>
                         </div>
                     </div>
 
                     <div id="url-list" class="url-grid-container"></div>
-
+                    
                     <div id="empty-state" class="empty-dashboard" style="display: none; height: 300px;">
                         <i class="material-icons large grey-text text-lighten-2">dashboard_customize</i>
                         <p>Ce dossier est vide.</p>
@@ -243,13 +250,46 @@
     </div>
 </div>
 
-<!-- Folder Edit Modal -->
+<!-- Create Site Modal -->
+<div id="create-site-modal" class="modal">
+    <div class="modal-content">
+        <h4>Nouveau Site Internet</h4>
+        <p class="grey-text">Ajoutez un nouveau site à surveiller.</p>
+        <div class="row">
+            <div class="input-field col s12">
+                <i class="material-icons prefix">business</i>
+                <input id="create-site-name" type="text">
+                <label for="create-site-name">Nom du site (Client/Projet)</label>
+            </div>
+            <div class="input-field col s12">
+                <i class="material-icons prefix">link</i>
+                <input id="create-site-root" type="text" placeholder="https://www.exemple.com">
+                <label for="create-site-root">URL Racine</label>
+                <span class="helper-text">L'URL principale du site.</span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
+        <a href="#!" class="waves-effect waves-light btn blue" id="confirm-create-site-btn">Créer</a>
+    </div>
+</div>
+
+<!-- Site Edit Modal -->
 <div id="folder-edit-modal" class="modal">
     <div class="modal-content">
-        <h4>Renommer le dossier</h4>
-        <div class="input-field">
-            <input id="edit-folder-name-input" type="text">
-            <label for="edit-folder-name-input">Nouveau nom du dossier</label>
+        <h4>Modifier le site</h4>
+        <div class="row">
+            <div class="input-field col s12">
+                <i class="material-icons prefix">business</i>
+                <input id="edit-folder-name-input" type="text">
+                <label for="edit-folder-name-input">Nom du site</label>
+            </div>
+            <div class="input-field col s12">
+                <i class="material-icons prefix">link</i>
+                <input id="edit-folder-root-input" type="text">
+                <label for="edit-folder-root-input">URL Racine</label>
+            </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -274,6 +314,29 @@
     </div>
 </div>
 
+<!-- Add Page Modal -->
+<div id="add-url-modal" class="modal">
+    <div class="modal-content">
+        <h4>Ajouter une page</h4>
+        <div class="row">
+            <div class="input-field col s12">
+                <i class="material-icons prefix">label</i>
+                <input id="add-url-name-input" type="text" placeholder="Ex: Page Accueil">
+                <label for="add-url-name-input">Nom de la page (Optionnel)</label>
+            </div>
+            <div class="input-field col s12">
+                <i class="material-icons prefix">link</i>
+                <input id="add-url-link-input" type="text" placeholder="https://www.exemple.com">
+                <label for="add-url-link-input">URL</label>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Annuler</a>
+        <a href="#!" class="waves-effect waves-light btn red lighten-1" id="confirm-add-url-btn">Ajouter</a>
+    </div>
+</div>
+
 <!-- Confirmation Modal -->
 <div id="confirmation-modal" class="modal">
     <div class="modal-content">
@@ -286,5 +349,25 @@
     </div>
 </div>
 
+<!-- Detailed Audit Slide-out Panel -->
+<div id="detail-overlay" class="detail-overlay"></div>
+<div id="detail-side-panel" class="detail-side-panel">
+    <div class="detail-header">
+        <h5 id="detail-title">Rapport d'audit</h5>
+        <button id="close-detail-btn" class="btn-flat waves-effect"><i class="material-icons">close</i></button>
+    </div>
+    <div class="detail-content" id="detail-content-body">
+        <div class="center-align" style="padding: 20px;">
+            <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left"><div class="circle"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-{{ require_js(get_asset_url('/theme-studio-hub/tests/poc-psreport.js'), { async: false }) }}
+
+
+{{ require_js(get_asset_url('./app.js'), { async: false }) }}
