@@ -1,5 +1,5 @@
 /**
- * PSReportApp v6.2 - Scrollbar & Final Tweaks
+ * PSReportApp v6.4 - Reordered Dashboard
  */
 const PSReportApp = (function() {
 
@@ -82,10 +82,7 @@ const PSReportApp = (function() {
             statAlerts: document.getElementById('stat-alerts'),
             statOffline: document.getElementById('stat-offline'), 
 
-            alertsList: document.getElementById('alerts-list'), // KEEP null safe in usage
-            noAlertsMsg: document.getElementById('no-alerts-msg'),
-            improvementsList: document.getElementById('improvements-list'), // KEEP null safe in usage
-            noImprovementsMsg: document.getElementById('no-improvements-msg'),
+            // REMOVED alertsList/improvementsList DOM refs
             
             offlineSection: document.getElementById('offline-section'), 
             offlineList: document.getElementById('offline-list'), 
@@ -93,6 +90,8 @@ const PSReportApp = (function() {
             // Removed: nameInput, urlInput, addUrlBtn references
             urlList: document.getElementById('url-list'),
             emptyState: document.getElementById('empty-state'),
+            
+            // Removed: Progress Bar Elements (Reverted)
 
             apiKeyInput: document.getElementById('api-key-input'),
             saveKeyBtn: document.getElementById('save-api-key'),
@@ -473,6 +472,7 @@ const PSReportApp = (function() {
         }
     }
 
+    // Unified Full Analysis (Reverted to parallel/throttled without progress bar)
     async function runFullAnalysis() {
         const folder = getActiveFolder();
         if (!folder || folder.urls.length === 0) return;
@@ -486,14 +486,19 @@ const PSReportApp = (function() {
 
         notify(`Lancement de l'analyse complète...`, 'blue');
         
-        // NEW: Launch Site Root Audit
+        // Launch Site Root Audit
         if(folder.rootUrl) {
             auditSiteRoot(folder);
         }
 
         for (const url of folder.urls) {
+            // Trigger Status Check
             checkUrlStatus(url); 
+            
+            // Trigger Audit (Do not await completion)
             runAudit(url.id);
+            
+            // Throttling to respect API rate limits without blocking UI
             await new Promise(r => setTimeout(r, 500)); 
         }
     }
